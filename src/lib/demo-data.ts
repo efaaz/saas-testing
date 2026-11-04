@@ -1,4 +1,5 @@
 import type { Order, Product, ShopProfile } from "@/types";
+import { DEFAULT_DELIVERY_CHARGES } from "@/lib/constants";
 import logoImage from "@/assets/images/Zabin.jpeg";
 
 // Helper function to generate a date string for a given number of days ago
@@ -80,6 +81,8 @@ export function createDemoOrders(): Order[] {
       customerName: "Nusrat Jahan",
       phone: "01712-345678",
       address: "Dhanmondi, Dhaka",
+      deliveryArea: "INSIDE_DHAKA",
+      deliveryCharge: DEFAULT_DELIVERY_CHARGES.INSIDE_DHAKA,
       items: [
         {
           productId: "PRD-001",
@@ -98,7 +101,7 @@ export function createDemoOrders(): Order[] {
           quantity: 1,
         },
       ],
-      total: 1070,
+      total: 1070 + DEFAULT_DELIVERY_CHARGES.INSIDE_DHAKA,
       status: "DELIVERED",
       createdAt: daysAgo(0, 9),
     },
@@ -107,6 +110,8 @@ export function createDemoOrders(): Order[] {
       customerName: "Samira Ahmed",
       phone: "01819-222333",
       address: "Uttara, Dhaka",
+      deliveryArea: "INSIDE_DHAKA",
+      deliveryCharge: DEFAULT_DELIVERY_CHARGES.INSIDE_DHAKA,
       items: [
         {
           productId: "PRD-002",
@@ -117,7 +122,7 @@ export function createDemoOrders(): Order[] {
           quantity: 1,
         },
       ],
-      total: 950,
+      total: 950 + DEFAULT_DELIVERY_CHARGES.INSIDE_DHAKA,
       status: "CONFIRMED",
       createdAt: daysAgo(0, 10),
     },
@@ -126,6 +131,8 @@ export function createDemoOrders(): Order[] {
       customerName: "Maliha Karim",
       phone: "01911-456789",
       address: "Mirpur 10, Dhaka",
+      deliveryArea: "INSIDE_DHAKA",
+      deliveryCharge: DEFAULT_DELIVERY_CHARGES.INSIDE_DHAKA,
       items: [
         {
           productId: "PRD-004",
@@ -136,7 +143,7 @@ export function createDemoOrders(): Order[] {
           quantity: 1,
         },
       ],
-      total: 1250,
+      total: 1250 + DEFAULT_DELIVERY_CHARGES.INSIDE_DHAKA,
       status: "PENDING",
       createdAt: daysAgo(0, 11),
     },
@@ -145,6 +152,8 @@ export function createDemoOrders(): Order[] {
       customerName: "Tanjim Rahman",
       phone: "01670-888999",
       address: "Mohammadpur, Dhaka",
+      deliveryArea: "INSIDE_DHAKA",
+      deliveryCharge: DEFAULT_DELIVERY_CHARGES.INSIDE_DHAKA,
       items: [
         {
           productId: "PRD-001",
@@ -155,7 +164,7 @@ export function createDemoOrders(): Order[] {
           quantity: 2,
         },
       ],
-      total: 1300,
+      total: 1300 + DEFAULT_DELIVERY_CHARGES.INSIDE_DHAKA,
       status: "DELIVERED",
       createdAt: daysAgo(1, 15),
     },
@@ -164,6 +173,8 @@ export function createDemoOrders(): Order[] {
       customerName: "Farah Islam",
       phone: "01730-321654",
       address: "Bashundhara, Dhaka",
+      deliveryArea: "INSIDE_DHAKA",
+      deliveryCharge: DEFAULT_DELIVERY_CHARGES.INSIDE_DHAKA,
       items: [
         {
           productId: "PRD-005",
@@ -174,7 +185,7 @@ export function createDemoOrders(): Order[] {
           quantity: 1,
         },
       ],
-      total: 350,
+      total: 350 + DEFAULT_DELIVERY_CHARGES.INSIDE_DHAKA,
       status: "CANCELLED",
       createdAt: daysAgo(2, 13),
     },

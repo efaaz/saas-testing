@@ -94,16 +94,22 @@ textarea {
     background: white !important;
   }
 
-  /*
-   * Radix Portal renders its children directly
-   * inside body. Hide the application and keep
-   * only the dialog content.
-   */
+  /* Hide the application and keep only the order slip. */
   body > * {
     display: none !important;
   }
 
-  body > [data-slot="dialog-content"][data-print-dialog] {
+  /* Some dialog portal implementations add a wrapper under body. */
+  body > [data-slot="dialog-portal"] {
+    display: block !important;
+  }
+
+  body > [data-slot="dialog-portal"] > :not([data-print-dialog]) {
+    display: none !important;
+  }
+
+  body > [data-slot="dialog-content"][data-print-dialog],
+  body > [data-slot="dialog-portal"] > [data-slot="dialog-content"][data-print-dialog] {
     display: block !important;
 
     position: static !important;

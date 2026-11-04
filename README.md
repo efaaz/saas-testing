@@ -2,25 +2,24 @@
 
 A frontend prototype for small social-commerce sellers to manage products, customer orders, inventory, and printable order slips.
 
+
+This is a demo application for Credosis Phase 02. It is intended to demonstrate the frontend architecture, workflow, and business logic for a small social commerce seller dashboard as I haven't use backend and for database I used localStorage to store the data and for state management I used  
+
 ## Tech stack
 
 - Next.js App Router + React + TypeScript
 - Tailwind CSS v4
-- shadcn/ui-inspired, locally owned components under `src/components/ui`, built with Radix UI primitives and the same copy-in/customization approach
-- Radix UI primitives
+- shadcn/ui for reusable UI components
 - Sonner for notifications
 - localStorage for browser-only demo persistence
 
 ## Run locally
-
-Requirements: Node.js 20.9+ and npm.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open http://localhost:3000. Run `npm run build` before deploying.
 
 ## Simple project structure
 
@@ -48,16 +47,6 @@ src/
 └── types.ts                 # Shared domain types
 ```
 
-## Architecture in plain language
-
-- `app/` is only the Next.js entry point and global setup.
-- `components/` contains the UI. Screens are grouped by what they display, not by a nested feature architecture.
-- `hooks/use-sellerdesk.ts` owns shared Products/Orders state and calls the functions in `lib/`.
-- `lib/*-service.ts` contains business rules that should not live inside React components.
-- `lib/storage.ts` is the only module that reads or writes localStorage.
-- `components/ui/` contains reusable shadcn-style components that can be customized in this repository.
-
-See [DEVELOPMENT_ORDER.md](./DEVELOPMENT_ORDER.md) for a recommended incremental implementation and commit sequence.
 
 ## Main workflow
 
@@ -69,14 +58,8 @@ See [DEVELOPMENT_ORDER.md](./DEVELOPMENT_ORDER.md) for a recommended incremental
 
 ## Demo persistence
 
-The demo seeds fictional products and orders the first time it runs. Data is stored in the current browser under `sellerdesk-demo-v3`.
+The demo seeds fictional products and orders the first time it runs. Data is stored in the current browser under `sellerdesk-data`.
 
-To reset the demo, run this in the browser console:
-
-```js
-localStorage.removeItem("sellerdesk-demo-v3");
-location.reload();
-```
 
 ## Current limitations
 
@@ -87,12 +70,3 @@ location.reload();
 - Gross profit is estimated from recorded product cost and selling prices only. It excludes shipping, packaging, marketing, refunds, taxes, and other operating costs.
 - localStorage is a demo adapter, not production persistence. A real application must validate and update stock on the server using database transactions.
 
-## shadcn/ui
-
-shadcn/ui is a source-code distribution approach rather than a traditional black-box component package. This repository keeps its UI component source under `src/components/ui`, using Radix primitives and shadcn conventions so the components can be inspected and customized. The `components.json` file configures the shadcn CLI for future additions. You can add more components later with:
-
-```bash
-npx shadcn@latest add tooltip
-```
-
-Review generated source before using it so the project remains consistent.

@@ -51,9 +51,9 @@ export function OrderSlipDialog({
                   <Image
                     src={shopInfo.logo || "/favicon.ico"}
                     alt="Shop logo"
-                    width={50}
-                    height={42}
-                    className="rounded-full"
+                    width={40}
+                    height={40}
+                    className="size-10 rounded-full object-cover"
                   />
                   <h2 className="font-cursive text-xl font-semibold">
                     {shopInfo.shopeName}

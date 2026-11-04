@@ -180,11 +180,13 @@ export function OrdersView({
                       <p className="text-xs text-muted-foreground">
                         {order.phone}
                       </p>
-                      {order.deliveryArea && order.deliveryCharge !== undefined && (
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          {DELIVERY_AREA_LABELS[order.deliveryArea]} · {formatBDT(order.deliveryCharge)} delivery
-                        </p>
-                      )}
+                      {order.deliveryArea &&
+                        order.deliveryCharge !== undefined && (
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {DELIVERY_AREA_LABELS[order.deliveryArea]} ·{" "}
+                            {formatBDT(order.deliveryCharge)} delivery
+                          </p>
+                        )}
                     </TableCell>
                     <TableCell className="whitespace-nowrap">
                       {order.items.reduce(

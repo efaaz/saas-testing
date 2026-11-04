@@ -42,9 +42,9 @@ export function Sidebar({
             <Image
               src={shopInfo.logo || "/favicon.ico"}
               alt="Shop logo"
-              width={50}
-              height={42}
-              className="rounded-full"
+              width={36}
+              height={36}
+              className="size-9 rounded-full object-cover"
             />
           </div>
           <div className="min-w-0 flex-1">
@@ -93,9 +93,9 @@ export function Sidebar({
             <Image
               src={shopInfo.logo || "/favicon.ico"}
               alt="Shop logo"
-              width={50}
-              height={42}
-              className="rounded-full"
+              width={32}
+              height={32}
+              className="size-8 rounded-full object-cover"
             />
           </div>
           <div>
