@@ -1,0 +1,64 @@
+import { createDemoOrders, createDemoProducts } from "@/lib/demo-data";
+import {
+  ACTIVE_PAGE_STORAGE_KEY,
+  NAV_ITEMS,
+  STORAGE_KEY,
+} from "@/lib/constants";
+import type { PageKey, SellerDeskData } from "@/types";
+
+function createInitialData(): SellerDeskData {
+  return { products: createDemoProducts(), orders: createDemoOrders() };
+}
+
+export const storage = {
+  load(): SellerDeskData {
+    const fallback = createInitialData();
+    if (typeof window === "undefined") return fallback;
+
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (!raw) return fallback;
+      const parsed: unknown = JSON.parse(raw);
+
+      if (!parsed || typeof parsed !== "object") return fallback;
+      const data = parsed as Partial<SellerDeskData>;
+      return {
+        products: Array.isArray(data.products)
+          ? data.products
+          : fallback.products,
+        orders: Array.isArray(data.orders) ? data.orders : fallback.orders,
+      };
+    } catch {
+      return fallback;
+    }
+  },
+  loadActivePage(defaultPage: PageKey): PageKey {
+    if (typeof window === "undefined") return defaultPage;
+
+    try {
+      const storedPage = window.localStorage.getItem(ACTIVE_PAGE_STORAGE_KEY);
+      return (
+        NAV_ITEMS.find((item) => item.id === storedPage)?.id ?? defaultPage
+      );
+    } catch (error) {
+      console.error("Unable to load SellerDesk active page.", error);
+      return defaultPage;
+    }
+  },
+  saveActivePage(page: PageKey): void {
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem(ACTIVE_PAGE_STORAGE_KEY, page);
+    } catch (error) {
+      console.error("Unable to save SellerDesk active page.", error);
+    }
+  },
+  save(data: SellerDeskData): void {
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (error) {
+      console.error("Unable to save SellerDesk data.", error);
+    }
+  },
+};
