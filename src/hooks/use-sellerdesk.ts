@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import type { CreateOrderInput, Order, OrderStatus, Product, ProductInput, SellerDeskData } from "@/types";
+import type { CreateOrderInput, DeliveryCharges, Order, OrderStatus, Product, ProductInput, SellerDeskData } from "@/types";
+import { DEFAULT_DELIVERY_CHARGES } from "@/lib/constants";
 import { storage } from "@/lib/storage";
 import { canDeleteProduct, createProduct, updateProduct, validateProductInput } from "@/lib/product-service";
 import { createOrder as createOrderService, transitionOrderStatus } from "@/lib/order-service";
@@ -10,21 +11,23 @@ import { createOrder as createOrderService, transitionOrderStatus } from "@/lib/
 export function useSellerDesk() {
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [deliveryCharges, setDeliveryCharges] = useState<DeliveryCharges>(DEFAULT_DELIVERY_CHARGES);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const initialData = storage.load();
     setProducts(initialData.products);
     setOrders(initialData.orders);
+    setDeliveryCharges(initialData.deliveryCharges);
     setIsReady(true);
   }, []);
 
   useEffect(() => {
     if (isReady) {
-      const data: SellerDeskData = { products, orders };
+      const data: SellerDeskData = { products, orders, deliveryCharges };
       storage.save(data);
     }
-  }, [products, orders, isReady]);
+  }, [products, orders, deliveryCharges, isReady]);
 
   const saveProduct = useCallback((input: ProductInput, productId?: string): string | null => {
     const validationError = validateProductInput(input, products, productId);
@@ -55,12 +58,24 @@ export function useSellerDesk() {
   }, [orders]);
 
   const createNewOrder = useCallback((input: CreateOrderInput): string | null => {
-    const result = createOrderService(input, products);
+    const result = createOrderService(input, products, deliveryCharges);
     if (!result.success) return result.error;
     setOrders((current) => [result.order, ...current]);
     toast.success("Order created. Confirm it when the seller is ready.");
     return null;
-  }, [products]);
+  }, [products, deliveryCharges]);
+
+  const updateDeliveryCharges = useCallback((charges: DeliveryCharges): string | null => {
+    if (
+      !Number.isInteger(charges.INSIDE_DHAKA) || charges.INSIDE_DHAKA < 0 ||
+      !Number.isInteger(charges.OUTSIDE_DHAKA) || charges.OUTSIDE_DHAKA < 0
+    ) {
+      return "Enter a whole number of 0 or more for each delivery charge.";
+    }
+    setDeliveryCharges(charges);
+    toast.success("Delivery charges updated. New orders will use these rates.");
+    return null;
+  }, []);
 
   const updateOrderStatus = useCallback((order: Order, nextStatus: OrderStatus) => {
     const result = transitionOrderStatus(order, nextStatus, orders, products);
@@ -76,10 +91,12 @@ export function useSellerDesk() {
   return {
     products,
     orders,
+    deliveryCharges,
     isReady,
     saveProduct,
     deleteProduct,
     createNewOrder,
+    updateDeliveryCharges,
     updateOrderStatus,
   };
 }

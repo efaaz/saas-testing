@@ -1,6 +1,7 @@
 "use client";
 import { Printer, Store } from "lucide-react";
 import type { Order } from "@/types";
+import { DELIVERY_AREA_LABELS } from "@/lib/constants";
 import { formatBDT, formatDateTime } from "@/lib/utils";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
@@ -126,11 +127,25 @@ export function OrderSlipDialog({
                 </TableBody>
               </Table>
             </div>
-            <div className="flex justify-between border-t pt-4">
-              <span className="font-semibold">Total</span>
-              <span className="text-xl font-bold">
-                {formatBDT(order.total)}
-              </span>
+            <div className="space-y-2 border-t pt-4">
+              <div className="flex justify-between text-sm text-slate-600">
+                <span>Items subtotal</span>
+                <span>
+                  {formatBDT(order.items.reduce((sum, item) => sum + item.price * item.quantity, 0))}
+                </span>
+              </div>
+              {order.deliveryArea && order.deliveryCharge !== undefined && (
+                <div className="flex justify-between text-sm text-slate-600">
+                  <span>Delivery ({DELIVERY_AREA_LABELS[order.deliveryArea]})</span>
+                  <span>{formatBDT(order.deliveryCharge)}</span>
+                </div>
+              )}
+              <div className="flex justify-between border-t pt-2">
+                <span className="font-semibold">Total</span>
+                <span className="text-xl font-bold">
+                  {formatBDT(order.total)}
+                </span>
+              </div>
             </div>
             <p className="mt-8 text-center text-xs text-slate-500">
               Thank you for shopping with{" "}

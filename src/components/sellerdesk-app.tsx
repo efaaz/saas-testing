@@ -15,6 +15,7 @@ import { OrdersView } from "@/components/orders/orders-view";
 import { OrderDialog } from "@/components/orders/order-dialog";
 import { SlipsView } from "@/components/orders/slips-view";
 import { OrderSlipDialog } from "@/components/orders/order-slip-dialog";
+import { SettingsView } from "@/components/settings/settings-view";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { storage } from "@/lib/storage";
 
@@ -22,10 +23,12 @@ export function SellerDeskApp() {
   const {
     products,
     orders,
+    deliveryCharges,
     isReady,
     saveProduct,
     deleteProduct,
     createNewOrder,
+    updateDeliveryCharges,
     updateOrderStatus,
   } = useSellerDesk();
 
@@ -144,6 +147,12 @@ export function SellerDeskApp() {
               onPrint={setSelectedSlip}
             />
           )}
+          {activePage === "settings" && (
+            <SettingsView
+              deliveryCharges={deliveryCharges}
+              onSaveDeliveryCharges={updateDeliveryCharges}
+            />
+          )}
         </div>
       </main>
 
@@ -156,6 +165,7 @@ export function SellerDeskApp() {
       <OrderDialog
         open={orderDialogOpen}
         products={products}
+        deliveryCharges={deliveryCharges}
         onOpenChange={setOrderDialogOpen}
         onCreate={createNewOrder}
       />

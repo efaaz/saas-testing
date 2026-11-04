@@ -1,13 +1,18 @@
 import { createDemoOrders, createDemoProducts } from "@/lib/demo-data";
 import {
   ACTIVE_PAGE_STORAGE_KEY,
+  DEFAULT_DELIVERY_CHARGES,
   NAV_ITEMS,
   STORAGE_KEY,
 } from "@/lib/constants";
 import type { PageKey, SellerDeskData } from "@/types";
 
 function createInitialData(): SellerDeskData {
-  return { products: createDemoProducts(), orders: createDemoOrders() };
+  return {
+    products: createDemoProducts(),
+    orders: createDemoOrders(),
+    deliveryCharges: DEFAULT_DELIVERY_CHARGES,
+  };
 }
 
 export const storage = {
@@ -27,6 +32,9 @@ export const storage = {
           ? data.products
           : fallback.products,
         orders: Array.isArray(data.orders) ? data.orders : fallback.orders,
+        deliveryCharges: isDeliveryCharges(data.deliveryCharges)
+          ? data.deliveryCharges
+          : fallback.deliveryCharges,
       };
     } catch {
       return fallback;
@@ -62,3 +70,14 @@ export const storage = {
     }
   },
 };
+
+function isDeliveryCharges(
+  value: unknown,
+): value is SellerDeskData["deliveryCharges"] {
+  if (!value || typeof value !== "object") return false;
+  const charges = value as Record<string, unknown>;
+  return [charges.INSIDE_DHAKA, charges.OUTSIDE_DHAKA].every(
+    (charge) =>
+      typeof charge === "number" && Number.isInteger(charge) && charge >= 0,
+  );
+}

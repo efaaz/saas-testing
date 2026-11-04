@@ -9,6 +9,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import type { Order, PageKey, Product } from "@/types";
+import { DELIVERY_AREA_LABELS } from "@/lib/constants";
 import { formatBDT, formatDateTime, getInitials } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -239,6 +240,13 @@ export function DashboardView({
                       <p className="text-xs text-muted-foreground">
                         {order.phone}
                       </p>
+                      {order.deliveryArea &&
+                        order.deliveryCharge !== undefined && (
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {DELIVERY_AREA_LABELS[order.deliveryArea]} ·{" "}
+                            {formatBDT(order.deliveryCharge)} delivery
+                          </p>
+                        )}
                     </TableCell>
                     <TableCell className="font-medium tabular-nums">
                       {formatBDT(order.total)}

@@ -1,7 +1,13 @@
 "use client";
 import { useMemo, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
-import type { CreateOrderInput, Product } from "@/types";
+import type {
+  CreateOrderInput,
+  DeliveryArea,
+  DeliveryCharges,
+  Product,
+} from "@/types";
+import { DELIVERY_AREA_LABELS } from "@/lib/constants";
 import { formatBDT } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,23 +33,27 @@ type DraftLine = { productId: string; quantity: string };
 export function OrderDialog({
   open,
   products,
+  deliveryCharges,
   onOpenChange,
   onCreate,
 }: {
   open: boolean;
   products: Product[];
+  deliveryCharges: DeliveryCharges;
   onOpenChange: (open: boolean) => void;
   onCreate: (input: CreateOrderInput) => string | null;
 }) {
   const [customerName, setCustomerName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [deliveryArea, setDeliveryArea] =
+    useState<DeliveryArea>("INSIDE_DHAKA");
   const [lines, setLines] = useState<DraftLine[]>([
     { productId: products[0]?.id ?? "", quantity: "1" },
   ]);
   const [error, setError] = useState("");
 
-  const total = useMemo(
+  const itemSubtotal = useMemo(
     () =>
       lines.reduce((sum, line) => {
         const product = products.find((item) => item.id === line.productId);
@@ -53,11 +63,13 @@ export function OrderDialog({
       }, 0),
     [lines, products],
   );
+  const deliveryCharge = deliveryCharges[deliveryArea];
 
   function resetForm() {
     setCustomerName("");
     setPhone("");
     setAddress("");
+    setDeliveryArea("INSIDE_DHAKA");
     setLines([{ productId: products[0]?.id ?? "", quantity: "1" }]);
     setError("");
   }
@@ -81,6 +93,7 @@ export function OrderDialog({
       customerName,
       phone,
       address,
+      deliveryArea,
       items: lines.map((line) => ({
         productId: line.productId,
         quantity: Number(line.quantity),
@@ -139,6 +152,32 @@ export function OrderDialog({
                 onChange={(event) => setAddress(event.target.value)}
                 placeholder="Area, city, and delivery details"
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="delivery-area">Delivery area</Label>
+              <Select
+                value={deliveryArea}
+                onValueChange={(value) =>
+                  setDeliveryArea(value as DeliveryArea)
+                }
+              >
+                <SelectTrigger id="delivery-area">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {(Object.keys(DELIVERY_AREA_LABELS) as DeliveryArea[]).map(
+                    (area) => (
+                      <SelectItem key={area} value={area}>
+                        {DELIVERY_AREA_LABELS[area]} ·{" "}
+                        {formatBDT(deliveryCharges[area])}
+                      </SelectItem>
+                    ),
+                  )}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                Set these rates any time from Settings.
+              </p>
             </div>
           </section>
           <section className="space-y-3">
@@ -242,11 +281,21 @@ export function OrderDialog({
               })
             )}
           </section>
-          <div className="flex items-center justify-between rounded-lg bg-muted/60 p-4">
-            <span className="text-sm font-medium">Order total</span>
-            <span className="text-xl font-semibold tabular-nums">
-              {formatBDT(total)}
-            </span>
+          <div className="space-y-2 rounded-lg bg-muted/60 p-4">
+            <div className="flex justify-between text-sm text-muted-foreground">
+              <span>Items subtotal</span>
+              <span className="tabular-nums">{formatBDT(itemSubtotal)}</span>
+            </div>
+            <div className="flex justify-between text-sm text-muted-foreground">
+              <span>Delivery ({DELIVERY_AREA_LABELS[deliveryArea]})</span>
+              <span className="tabular-nums">{formatBDT(deliveryCharge)}</span>
+            </div>
+            <div className="flex items-center justify-between border-t pt-2">
+              <span className="text-sm font-medium">Order total</span>
+              <span className="text-xl font-semibold tabular-nums">
+                {formatBDT(itemSubtotal + deliveryCharge)}
+              </span>
+            </div>
           </div>
           <p className="text-xs text-muted-foreground">
             New orders start as Pending. Stock is deducted only when you confirm

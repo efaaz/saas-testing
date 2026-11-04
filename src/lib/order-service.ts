@@ -1,4 +1,10 @@
-import type { CreateOrderInput, Order, OrderStatus, Product } from "@/types";
+import type {
+  CreateOrderInput,
+  DeliveryCharges,
+  Order,
+  OrderStatus,
+  Product,
+} from "@/types";
 import { ORDER_STATUS_LABELS } from "@/lib/constants";
 import { createId } from "@/lib/utils";
 
@@ -13,6 +19,7 @@ export type TransitionResult =
 export function createOrder(
   input: CreateOrderInput,
   products: Product[],
+  deliveryCharges: DeliveryCharges,
 ): CreateOrderResult {
   if (
     !input.customerName.trim() ||
@@ -23,6 +30,12 @@ export function createOrder(
       success: false,
       error: "Add the customer's name, phone number, and delivery address.",
     };
+  }
+  if (
+    input.deliveryArea !== "INSIDE_DHAKA" &&
+    input.deliveryArea !== "OUTSIDE_DHAKA"
+  ) {
+    return { success: false, error: "Choose a delivery area for this order." };
   }
   if (
     !input.items.length ||
@@ -69,6 +82,19 @@ export function createOrder(
     });
   }
 
+  const deliveryCharge = deliveryCharges[input.deliveryArea];
+  if (!Number.isInteger(deliveryCharge) || deliveryCharge < 0) {
+    return {
+      success: false,
+      error: "The delivery charge is invalid. Update it in Settings.",
+    };
+  }
+
+  const itemSubtotal = orderItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  );
+
   return {
     success: true,
     order: {
@@ -76,11 +102,10 @@ export function createOrder(
       customerName: input.customerName.trim(),
       phone: input.phone.trim(),
       address: input.address.trim(),
+      deliveryArea: input.deliveryArea,
+      deliveryCharge,
       items: orderItems,
-      total: orderItems.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0,
-      ),
+      total: itemSubtotal + deliveryCharge,
       status: "PENDING",
       createdAt: new Date().toISOString(),
     },

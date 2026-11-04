@@ -21,6 +21,10 @@ export type ShopProfile = {
 
 export type OrderStatus = "PENDING" | "CONFIRMED" | "DELIVERED" | "CANCELLED";
 
+export type DeliveryArea = "INSIDE_DHAKA" | "OUTSIDE_DHAKA";
+
+export type DeliveryCharges = Record<DeliveryArea, number>;
+
 export type OrderItem = {
   productId: string;
   productName: string;
@@ -35,13 +39,17 @@ export type Order = {
   customerName: string;
   phone: string;
   address: string;
+  /** Absent on orders saved before delivery area selection was added. */
+  deliveryArea?: DeliveryArea;
+  /** The rate applied when this order was created. */
+  deliveryCharge?: number;
   items: OrderItem[];
   total: number;
   status: OrderStatus;
   createdAt: string;
 };
 
-export type PageKey = "dashboard" | "products" | "orders" | "slips";
+export type PageKey = "dashboard" | "products" | "orders" | "slips" | "settings";
 
 export type ProductInput = Pick<
   Product,
@@ -52,10 +60,12 @@ export type CreateOrderInput = {
   customerName: string;
   phone: string;
   address: string;
+  deliveryArea: DeliveryArea;
   items: Array<{ productId: string; quantity: number }>;
 };
 
 export type SellerDeskData = {
   products: Product[];
   orders: Order[];
+  deliveryCharges: DeliveryCharges;
 };

@@ -1,6 +1,7 @@
 import { FileText, Printer, ReceiptText } from "lucide-react";
 import type { Order } from "@/types";
 import { formatBDT, formatDateTime } from "@/lib/utils";
+import { DELIVERY_AREA_LABELS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -81,6 +82,11 @@ export function SlipsView({
                     <p className="text-xs text-muted-foreground">
                       {formatDateTime(order.createdAt)}
                     </p>
+                    {order.deliveryArea && order.deliveryCharge !== undefined && (
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {DELIVERY_AREA_LABELS[order.deliveryArea]} · {formatBDT(order.deliveryCharge)} delivery
+                      </p>
+                    )}
                   </div>
                   <div className="flex items-center justify-between gap-3 sm:justify-end">
                     <p className="font-semibold">{formatBDT(order.total)}</p>

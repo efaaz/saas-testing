@@ -8,7 +8,7 @@ import {
   Search,
 } from "lucide-react";
 import type { Order, OrderStatus } from "@/types";
-import { ORDER_STATUS_LABELS } from "@/lib/constants";
+import { DELIVERY_AREA_LABELS, ORDER_STATUS_LABELS } from "@/lib/constants";
 import { formatBDT, formatDateTime } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -180,6 +180,11 @@ export function OrdersView({
                       <p className="text-xs text-muted-foreground">
                         {order.phone}
                       </p>
+                      {order.deliveryArea && order.deliveryCharge !== undefined && (
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {DELIVERY_AREA_LABELS[order.deliveryArea]} · {formatBDT(order.deliveryCharge)} delivery
+                        </p>
+                      )}
                     </TableCell>
                     <TableCell className="whitespace-nowrap">
                       {order.items.reduce(
